@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState, useEffect } from "react";
 
 const EventManagement = () => {
@@ -10,9 +11,12 @@ const EventManagement = () => {
   }, []);
 
   const fetchEvents = async () => {
-    const response = await fetch("http://localhost:3005/api/events");
-    const data = await response.json();
-    setEvents(data);
+    try {
+      const response = await axios.get("http://localhost:3005/api/events");
+      setEvents(response.data);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -20,15 +24,20 @@ const EventManagement = () => {
     const method = editingId ? "PUT" : "POST";
     const url = editingId ? `http://localhost:3005/api/events/${editingId}` : "http://localhost:3005/api/events";
 
-    await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+    try {
+      await axios({
+        method,
+        url,
+        headers: { "Content-Type": "application/json" },
+        data: formData,
+      });
 
-    setFormData({ title: "", description: "", date: "", location: "" });
-    setEditingId(null);
-    fetchEvents();
+      setFormData({ title: "", description: "", date: "", location: "" });
+      setEditingId(null);
+      fetchEvents();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   const handleEdit = (event) => {
@@ -37,8 +46,12 @@ const EventManagement = () => {
   };
 
   const handleDelete = async (id) => {
-    await fetch(`http://localhost:3005/api/events/${id}`, { method: "DELETE" });
-    fetchEvents();
+    try {
+      await axios.delete(`http://localhost:3005/api/events/${id}`);
+      fetchEvents();
+    } catch (error) {
+      console.error("Error deleting event:", error);
+    }
   };
 
   return (

@@ -2,14 +2,14 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 
 const ProtectedRoutes = ({ children }) => {
-  const isAuthenticated = localStorage.getItem("token"); // Example: Check token in localStorage
-  const isAdmin = localStorage.getItem("role") === "admin"; // Example: Check role in localStorage
+  const isAuthenticated = localStorage.getItem("adminToken"); 
+  const isAdmin = localStorage.getItem("role") === "admin"; 
 
   if (!isAuthenticated || !isAdmin) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/admin/login" />;  
   }
 
-  return children;
+  return children;  
 };
 
 export default ProtectedRoutes;

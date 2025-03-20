@@ -11,6 +11,8 @@ import Navbar from '../Components/navbar'
 
 import login from '../Components/login'; 
 import Login from '../Pages/loginpage'
+import AdminLogin from '../Admin/adminLogin'
+import Dashboard from '../Admin/Pages/dashboard'
 
 
 
@@ -29,6 +31,9 @@ const AppRoutes = () => {
               <AdminDashboard/>
             </ProtectedRoutes> } /> */}
             <Route path = '/login' element = {<Login/>} />
+            <Route path = '/adminLogin' element = {<AdminLogin/>} />
+            <Route path='/dashboard' element = {<Dashboard/>} />
+
         </Routes>
     </div>
     

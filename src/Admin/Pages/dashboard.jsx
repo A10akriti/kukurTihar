@@ -1,14 +1,21 @@
+import axios from "axios";
 import { useState, useEffect } from "react";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({ totalEvents: 0 });
 
   useEffect(() => {
-    fetch("http://localhost:3005/api/dashboard")
-      .then((response) => response.json())
-      .then((data) => setStats(data))
-      .catch((error) => console.error("Error fetching dashboard data:", error));
+    getDashboardData();
   }, []);
+
+  const getDashboardData = async () => {
+    try {
+      const response = await axios.get("http://localhost:3005/api/dashboard");
+      setStats(response.data);
+    } catch (error) {
+      throw new Error("There was an error getting your Dashboard data.");
+    }
+  };
 
   return (
     <div className="p-6">
