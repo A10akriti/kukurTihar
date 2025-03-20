@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -6,6 +7,10 @@ const Contact = () => {
     email: "",
     message: "",
   });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(""); 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -15,18 +20,39 @@ const Contact = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+   
+  const submitContactForm = async (contactData) => {
+    try {
+      const response = await axios.post("http://localhost:3005/api/contact", contactData);
+      return response.data;
+    } catch (error) {
+      throw new Error("There was an error submitting your contact form.");
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Implement backend API call to send the message
-    console.log("Form submitted:", formData);
-    alert("Thank you for reaching out! We will get back to you soon.");
-    setFormData({ name: "", email: "", message: "" });
+    setLoading(true);
+
+    try {
+      const result = await submitContactForm(formData); 
+      setSuccess("Thank you for reaching out! We will get back to you soon.");
+      setFormData({ name: "", email: "", message: "" });
+    } catch (error) {
+      setError("There was an error submitting your contact form. Please try again.");
+    } finally {
+      setLoading(false); 
+    }
   };
 
   return (
     <section className="bg-white py-12">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-8">Contact Us</h2>
+
+        {success && <p className="text-green-500 text-center">{success}</p>}
+        {error && <p className="text-red-500 text-center">{error}</p>}
+
         <form
           className="max-w-lg mx-auto bg-gray-100 shadow-lg p-6 rounded-lg"
           onSubmit={handleSubmit}
@@ -85,8 +111,9 @@ const Contact = () => {
           <button
             type="submit"
             className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700"
+            disabled={loading}
           >
-            Send Message
+            {loading ? "Sending..." : "Send Message"}
           </button>
         </form>
       </div>

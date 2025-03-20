@@ -12,8 +12,8 @@ const login = () => {
     e.preventDefault();
 
     // Simulate admin credentials
-    const adminUsername = "admin";
-    const adminPassword = "password123";
+    const adminUsername = "TiharAdmin";
+    const adminPassword = "kukurTihar10";
 
     if (username === adminUsername && password === adminPassword) {
       // Set token and role in localStorage

@@ -1,48 +1,30 @@
-import React, { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
-const Events = () => {
+const Event = () => {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    // Replace with your API endpoint
-    fetch("https://your-backend-api.com/events")
+    fetch("http://localhost:3005/api/events")
       .then((response) => response.json())
       .then((data) => setEvents(data))
       .catch((error) => console.error("Error fetching events:", error));
   }, []);
 
   return (
-    <section className="bg-gray-100 py-12">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">Upcoming Events</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.length ? (
-            events.map((event) => (
-              <div
-                key={event.id}
-                className="bg-white shadow-md rounded-lg overflow-hidden"
-              >
-                <img
-                  src={event.image}
-                  alt={event.title}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-4">
-                  <h3 className="text-xl font-semibold mb-2">{event.title}</h3>
-                  <p className="text-gray-700 mb-4">{event.description}</p>
-                  <p className="text-sm text-gray-500">
-                    Date: {new Date(event.date).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-600">No events found.</p>
-          )}
-        </div>
+    <div className="container mx-auto p-4">
+      <h2 className="text-2xl font-bold mb-4">Upcoming Events</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {events.map((event) => (
+          <div key={event._id} className="border p-4 rounded-lg shadow-lg">
+            <h3 className="text-xl font-semibold">{event.title}</h3>
+            <p>{event.description}</p>
+            <p className="text-sm text-gray-600">📍 {event.location}</p>
+            <p className="text-sm text-gray-600">📅 {new Date(event.date).toDateString()}</p>
+          </div>
+        ))}
       </div>
-    </section>
+    </div>
   );
 };
 
-export default Events;
+export default Event;

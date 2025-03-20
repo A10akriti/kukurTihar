@@ -8,8 +8,9 @@ import Contact from '../Pages/Contact'
 import Donate from '../Pages/Donate'
 import Navbar from '../Components/navbar'
 //import ProtectedRoutes from './ProtectedRoutes'
-import AdminDashboard from '../Components/AdminDashboard'
+
 import login from '../Components/login'; 
+import Login from '../Pages/loginpage'
 
 
 
@@ -27,7 +28,7 @@ const AppRoutes = () => {
             {/* <Route path='/admin' element = { <ProtectedRoutes> 
               <AdminDashboard/>
             </ProtectedRoutes> } /> */}
-            <Route path ='/login' element = {<login/>} />
+            <Route path = '/login' element = {<Login/>} />
         </Routes>
     </div>
     
