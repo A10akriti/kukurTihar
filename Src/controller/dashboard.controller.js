@@ -1,30 +1,12 @@
-const ContactModel = require("../model/contact.model");
-const EventModel = require("../model/event.model");
-const GalleryModel = require("../model/gallerymodel");
-const contactCtrl = require("../controller/contact.controller");
+const eventService = require("../service/event.service");
 
-class DashboardController {
-  getAlldata = async (req, res, next) => {
-    try {
-      const contactusData = await ContactModel.find();
-      const allEvents = await EventModel.find();
-      const allImage = await GalleryModel.find();
+const getDashboardData = async (req, res) => {
+  try {
+    const events = await eventService.getAllEvents();
+    res.status(200).json({ totalEvents: events.length, events });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-      res.json({
-        data: {
-          contactusData,
-          allEvents,
-          allImage,
-        },
-        msg: "all data fetched",
-      });
-    } catch (error) {
-      next({
-        msg: error,
-      });
-    }
-  };
-}
-
-const DashboardCtrl = new DashboardController();
-module.exports = DashboardCtrl;
+module.exports = { getDashboardData };

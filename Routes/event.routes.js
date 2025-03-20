@@ -1,50 +1,12 @@
-const EventCtrl = require("../Src/controller/event.controller");
-const AuthCheck = require("../Src/rbac/authCheck");
-const { IsAdmin } = require("../Src/rbac/rbac");
-const uploader = require("../Src/middleware/uploader");
+const express = require("express");
+const eventController = require("../Src/controller/event.controller");
 
-const eventRoutes = require("express").Router();
+const EventRoutes = express.Router();
 
-// Middleware to set the upload path (if needed for event-related uploads)
-const dirPath = (req, res, next) => {
-  req.uploadPath = "./public/upload";
-  next();
-};
+EventRoutes.post("/", eventController.createEvent);
+EventRoutes.get("/", eventController.getAllEvents);
+EventRoutes.get("/:id", eventController.getEventById);
+EventRoutes.put("/:id", eventController.updateEvent);
+EventRoutes.delete("/:id", eventController.deleteEvent);
 
-// Route to create a new event
-eventRoutes.post("/", dirPath, uploader.single("image"), EventCtrl.CreateEvent);
-
-// Route to get all events
-eventRoutes.get("/allevents", EventCtrl.GetAllEvents);
-
-// Route to get a single event by id
-eventRoutes.get("/:id", EventCtrl.GetEventById);
-
-// Route to update an event by id
-eventRoutes.patch(
-  "/update/:id",
-  // AuthCheck,
-  // IsAdmin,
-  dirPath,
-  uploader.single("image"),
-  EventCtrl.UpdateEvent
-);
-
-// Route to delete an event by ID
-eventRoutes.delete(
-  "/delete/:id",
-  // AuthCheck,
-  // IsAdmin,
-  EventCtrl.DeleteEvent
-);
-
-module.exports = eventRoutes;
-
-// const eventRoutes =  require("express").Router();
-
-// eventRoutes.post("/", EventCtrl.CreateEvent);
-// eventRoutes.get("/", EventCtrl.GetAllEvents);
-// eventRoutes.get("/:id", EventCtrl.GetEventById);
-// eventRoutes.put("/:id", EventCtrl.UpdateEvent);
-// eventRoutes.delete("/:id", EventCtrl.DeleteEvent);
-// eventRoutes.get("/test", EventCtrl.Test);
+module.exports = EventRoutes;

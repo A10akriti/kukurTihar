@@ -1,14 +1,28 @@
 const express = require("express");
+const cors = require("cors"); 
 require("./config/database.config");
+
 const app = express();
+app.use(cors()); 
+
 const routes = require("./Routes");
+const ContactRoutes = require("./Routes/contact.routes");
+const EventRoutes = require("./Routes/event.routes");
+const DashboardRoutes = require("./Routes/dashboard.routes");
+
 app.use(
   express.json(),
   express.urlencoded({
     extended: true,
   })
 );
+
+// Use routes after middlewares
 app.use(routes);
+app.use ("/api/contact" , ContactRoutes);
+app.use ("/api/events" , EventRoutes);
+app.use ("/api/dashboard" , DashboardRoutes);
+
 app.use((req, res, next) => {
   next({
     data: "",
@@ -29,6 +43,7 @@ app.use((error, req, res, next) => {
     meta: null,
   });
 });
+
 app.listen(3005, "localhost", (error) => {
   if (error) {
     console.log("Error while listening Server");

@@ -1,140 +1,49 @@
-const EventSrv = require ("../service/event.service"); 
+const eventService = require("../service/event.service");
 
+const createEvent = async (req, res) => {
+  try {
+    const event = await eventService.createEvent(req.body);
+    res.status(201).json(event);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 
-class EventController {
-  // Create a new event
-  CreateEvent = async (req, res, next) => {
-    try {
-      let data = req.body;
-      if (req.file) {
-        data.image = req.file.filename; // Handle optional image upload
-      }
+const getAllEvents = async (req, res) => {
+  try {
+    const events = await eventService.getAllEvents();
+    res.status(200).json(events);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-      // Validate the event data (assuming a validation method exists in the service)
-      const validation = await EventSrv.validateEvent(data);
+const getEventById = async (req, res) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    if (!event) return res.status(404).json({ message: "Event not found" });
+    res.status(200).json(event);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-      // Create the event
-      const response = await EventSrv.CreateEvent(validation);
-      res.json({
-        data: response,
-        msg: "Event created successfully",
-        code: 200,
-        meta: null,
-      });
-    } catch (error) {
-      console.error("Error while creating event", error);
-      next({
-        data: "",
-        msg: "Event creation failed",
-        code: 400,
-        meta: null,
-      });
-    }
-  };
+const updateEvent = async (req, res) => {
+  try {
+    const event = await eventService.updateEvent(req.params.id, req.body);
+    res.status(200).json(event);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 
-  // Get all events
-  GetAllEvents = async (req, res, next) => {
-    try {
-      const response = await EventSrv.GetAllEvents();
-      res.json({
-        data: response,
-        msg: "All events retrieved successfully",
-        code: 200,
-        meta: null,
-      });
-    } catch (error) {
-      console.error("Error while fetching all events", error);
-      next({
-        data: "",
-        msg: "Failed to retrieve events",
-        code: 500,
-        meta: null,
-      });
-    }
-  };
+const deleteEvent = async (req, res) => {
+  try {
+    await eventService.deleteEvent(req.params.id);
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-  // Get an event by ID
-  GetEventById = async (req, res, next) => {
-    try {
-      const response = await EventSrv.GetEventById(req.params.id);
-      res.json({
-        data: response,
-        msg: "Event retrieved successfully",
-        code: 200,
-        meta: null,
-      });
-    } catch (error) {
-      console.error("Error while fetching event by ID", error);
-      next({
-        data: "",
-        msg: "Failed to retrieve the event",
-        code: 404,
-        meta: null,
-      });
-    }
-  };
-
-  // Update an event
-  UpdateEvent = async (req, res, next) => {
-    try {
-      let existingEvent = await EventSrv.GetEventById(req.params.id);
-      let data = req.body;
-      if (req.file) {
-        data.image = req.file.filename; // Update image if provided
-      } else {
-        data.image = existingEvent.image; // Keep the old image if none provided
-      }
-
-      // Validate the updated event data
-      const validation = await EventSrv.validateEvent(data);
-
-      // Update the event
-      const response = await EventSrv.UpdateEvent(req.params.id, validation);
-      res.json({
-        data: response,
-        msg: "Event updated successfully",
-        code: 200,
-        meta: null,
-      });
-    } catch (error) {
-      console.error("Error while updating event", error);
-      next({
-        data: "",
-        msg: "Event update failed",
-        code: 400,
-        meta: null,
-      });
-    }
-  };
-
-  // Delete an event
-  DeleteEvent = async (req, res, next) => {
-    try {
-      const response = await EventSrv.DeleteEvent(req.params.id);
-      res.json({
-        data: response,
-        msg: "Event deleted successfully",
-        code: 200,
-        meta: null,
-      });
-    } catch (error) {
-      console.error("Error while deleting event", error);
-      next({
-        data: "",
-        msg: "Event deletion failed",
-        code: 400,
-        meta: null,
-      });
-    }
-  };
-
-  // Test endpoint
-  Test = (req, res, next) => {
-    res.json({
-      msg: "Hello from EventController",
-    });
-  };
-}
-
-const EventCtrl = new EventController();
-module.exports = EventCtrl;
+module.exports = { createEvent, getAllEvents, getEventById, updateEvent, deleteEvent };
