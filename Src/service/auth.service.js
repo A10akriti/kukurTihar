@@ -1,20 +1,8 @@
-const Joi = require("joi");
+const bcrypt = require("bcryptjs");
 const UserModel = require("../model/auth.model");
+const Joi = require("joi");
 
-class AuthService {   
-  login = (payload) => {
-    try {
-      let rules = Joi.object({
-        email: Joi.string().email().required(),
-        password: Joi.required(),
-      });
-      let response = rules.validateAsync(payload);
-      return response;
-    } catch (exception) {
-      throw exception;
-    }
-  };
-
+class AuthService {
   registerValidation = (data) => {
     try {
       let rules = Joi.object({
@@ -22,7 +10,8 @@ class AuthService {
         lname: Joi.string().required(),
         email: Joi.string().email().required(),
         password: Joi.string().required(),
-        phone: Joi.number(),
+        phone: Joi.number().optional(),
+        role: Joi.string().valid("user", "admin").optional(),
       });
 
       let response = rules.validate(data);
@@ -35,33 +24,33 @@ class AuthService {
       throw exception;
     }
   };
-  createUser = async (data) => {
-    try {
-      const user = new UserModel(data);
-      return await user.save();
-    } catch (exception) {
-      console.error("Error while creating user:", exception);
-      throw exception;
-    }
-  };
 
   findUserByEmail = async (email) => {
     try {
-      let response = await UserModel.findOne({ email });
-      return response;
+      return await UserModel.findOne({ email });
     } catch (exception) {
       throw exception;
     }
   };
 
-  findUserById = async (id) => {
+  createUser = async (data) => {
     try {
-      let response = await UserModel.findById(id, { password: 0 });
-      return response;
+      data.password = bcrypt.hashSync(data.password, 10);
+      const newUser = new UserModel(data);
+      await newUser.save();
+      return newUser;
+    } catch (error) {
+      throw new Error("Error creating user: " + error.message);
+    }
+  };
+
+  findAllUsers = async () => {
+    try {
+      return await UserModel.find({}, { password: 0 });
     } catch (exception) {
       throw exception;
     }
-  };
+  }
 }
 
 const usersrv = new AuthService();

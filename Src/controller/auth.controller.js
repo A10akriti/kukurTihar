@@ -7,39 +7,32 @@ class AuthController {
     try {
       let payload = req.body;
       await usersrv.login(payload);
+
       let response = await usersrv.findUserByEmail(payload.email);
+      
       if (response) {
         let checkPass = bcrypt.compareSync(payload.password, response.password);
-        console.log("passcheck", checkPass);
+        if (!checkPass) throw { msg: "Credential does not match" };
 
         let accessToken = jwtToken.sign(
-          { id: response._id },
+          { id: response._id, role: response.role }, 
           process.env.JWT_KEY,
-          {
-            expiresIn: "1 day",
-          }
+          { expiresIn: "1 day" }
         );
-        if (checkPass) {
-          res.json({
-            data: {
-              AscessToken: accessToken,
-              data: response,
-            },
-            msg: "login successfull",
-          });
-        } else {
-          throw { msg: "Credential doesnot match" };
-        }
+
+        res.json({
+          data: {
+            AccessToken: accessToken,
+            data: response,
+          },
+          msg: "Login successful",
+        });
       } else {
-        throw { msg: "Credential doesnot match" };
+        throw { msg: "Credential does not match" };
       }
     } catch (error) {
       console.log("login", error);
-      next({
-        msg: error,
-        code: 500,
-        meta: null,
-      });
+      next({ msg: error, code: 401, meta: null });
     }
   };
 
@@ -47,7 +40,9 @@ class AuthController {
     try {
       let data = req.body;
       await usersrv.registerValidation(data);
-      data.password = bcrypt.hashSync(data.password, 10);
+
+      data.role = data.role || "user"; 
+
       let response = await usersrv.createUser(data);
       if (response) {
         res.json({
@@ -59,9 +54,16 @@ class AuthController {
       }
     } catch (error) {
       console.log("register", error);
-      next({
-        msg: error,
-      });
+      next({ msg: error });
+    }
+  };
+
+  getAllUsers = async (req, res, next) => {
+    try {
+      let users = await usersrv.findAllUsers();
+      res.json({ data: users, msg: "Users retrieved successfully" });
+    } catch (error) {
+      next({ msg: error });
     }
   };
 }

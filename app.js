@@ -11,7 +11,7 @@ const EventRoutes = require("./Routes/event.routes");
 const DashboardRoutes = require("./Routes/dashboard.routes");
 
 app.use(
-  express.json(),
+  express.json(), 
   express.urlencoded({
     extended: true,
   })
@@ -19,9 +19,9 @@ app.use(
 
 // Use routes after middlewares
 app.use(routes);
-app.use ("/api/contact" , ContactRoutes);
-app.use ("/api/events" , EventRoutes);
-app.use ("/api/dashboard" , DashboardRoutes);
+app.use ("/api" , ContactRoutes);
+app.use ("/api" , EventRoutes);
+app.use ("/api" , DashboardRoutes);
 
 app.use((req, res, next) => {
   next({
