@@ -97,9 +97,9 @@ const Login = () => {
   return (
     <>
       <div className="relative bg-blue-50 flex justify-center items-center h-[100vh] ">
-        <div className="bg-[white] flex flex-col gap-5 rounded-lg p-10 shadow-2xl">
+        <div className="bg-[white] flex flex-col gap-5 rounded-lg p-10 shadow-2xl border-4 border-orange-500">
           <div className="flex justify-center font-bold text-[#4f46e5]">
-            Welcome to AI Solution
+            Welcome to Dog Worship Festival
           </div>
 
           <div>
